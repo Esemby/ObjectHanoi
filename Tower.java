@@ -5,7 +5,6 @@ public class Tower
 	public final int FREE_SPACE = 0;
 	
 	private int[] Rings;
-	private int topmostRing;
 	private int topmostRingIndex;
 	private String towerName;
 	
@@ -21,6 +20,7 @@ public class Tower
 	public void setRingCount(int ringCount)
 	{
 		Rings = new int[ringCount];
+		clearTower();
 	}	
 	public int getRingCount()
 	{
@@ -34,7 +34,6 @@ public class Tower
 			Rings[level]=level+1;
 			level++;
 		}
-		topmostRing = Rings[0];
 		topmostRingIndex = 0;
 	}
 	public void clearTower()
@@ -45,8 +44,7 @@ public class Tower
 			Rings[level] = FREE_SPACE;
 			level++;
 		}
-		topmostRing = Rings[Rings.length-1];
-		topmostRingIndex = Rings.length-1;
+		topmostRingIndex = Rings.length;
 	}
 
 	public void setTowerName(String Name)
@@ -57,21 +55,85 @@ public class Tower
 	{
 		return towerName;
 	}
-	
-	public boolean isTrasfereLegal(Tower Target)
+	public String[] getTowerDrawing()
 	{
-		if(Target.topmostRing > this.topmostRing && this.topmostRing != FREE_SPACE)
+		String[] draft = new String[Rings.length];
+		char middlePice = '|';
+		char filling = '█';		
+		
+		for(int y = 0; y < Rings.length;y++)
 		{
-			return true;
+			draft[y] = "";
+			int fillWidth = Rings[y];
+			int spaceWidth = Rings.length-fillWidth;
+
+			for(int x = 0; x < spaceWidth;x++)
+			{
+				draft[y] += " ";
+			}
+			for(int x = 0; x < fillWidth;x++)
+			{
+				draft[y] += filling;
+			}
+			draft[y] += middlePice;
+			for(int x = 0; x < fillWidth;x++)
+			{
+				draft[y] += filling;
+			}
+
+			for(int x = 0; x < spaceWidth;x++)
+			{
+				draft[y] += " ";
+			}
+		}
+		
+		return draft;
+	}
+	public String getLevelDrawing(int level)
+	{
+		String draft = "";
+		char middlePice = '|';
+		char filling = '█';	
+		
+		draft = "";
+		int spaceWidth = Rings.length-level;
+
+		for(int x = 0; x < spaceWidth;x++)
+		{
+			draft += " ";
+		}
+		for(int x = 0; x < level;x++)
+		{
+			draft += filling;
+		}
+		draft += middlePice;
+		for(int x = 0; x < level;x++)
+		{
+			draft += filling;
+		}
+
+		for(int x = 0; x < spaceWidth;x++)
+		{
+			draft += " ";
+		}
+		
+		return draft;
+	}
+	
+	public boolean isTransfereLegal(Tower Target)
+	{
+		if(this.getTompmostRing() == FREE_SPACE || (Target.getTompmostRing() < this.getTompmostRing() && Target.getTompmostRing() != FREE_SPACE))
+		{
+			return false;
 		}
 		else
 		{
-			return false;
+			return true;
 		}
 	}
 	public void addRing(int ringValue)
 	{
-		if(ringValue < topmostRing)
+		if(topmostRingIndex > 0 )
 		{
 			topmostRingIndex--;
 			Rings[topmostRingIndex] = ringValue;
@@ -85,5 +147,26 @@ public class Tower
 			topmostRingIndex++;
 		}
 	}
-	
+	public int getTompmostRing()
+	{
+		if(topmostRingIndex < Rings.length)
+		{
+			return Rings[topmostRingIndex];
+		}
+		else
+		{
+			return FREE_SPACE;
+		}
+	}
+	public boolean isTowerFull()
+	{
+		if(Rings[0] != FREE_SPACE)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 }
